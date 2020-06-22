@@ -1,48 +1,47 @@
 from enum import Enum
+from rover_command import TranslationCommand, RotationCommand
+from rover_base import RoverBase, Direction, Commands
 
-class Direction(Enum):
-    NORTH = "N" 
-    SOUTH = "S" 
-    EAST = "E" 
-    WEST = "W" 
+mutations = {
+    Commands.FORWARD: {
+        Direction.NORTH: TranslationCommand(0, 1),
+        Direction.SOUTH: TranslationCommand(0, -1),
+        Direction.EAST: TranslationCommand(1, 0),
+        Direction.WEST: TranslationCommand(-1, 0)
+    },
 
-class Rover:
+    Commands.BACKWARD: {
+        Direction.NORTH: TranslationCommand(0, -1),
+        Direction.SOUTH: TranslationCommand(0, 1),
+        Direction.EAST: TranslationCommand(-1, 0),
+        Direction.WEST: TranslationCommand(1, 0)
+    },
+
+    Commands.RIGHT : {
+        Direction.NORTH: RotationCommand(Direction.EAST),
+        Direction.SOUTH: RotationCommand(Direction.WEST),
+        Direction.EAST: RotationCommand(Direction.SOUTH),
+        Direction.WEST: RotationCommand(Direction.NORTH)
+    },
+
+    Commands.LEFT: {
+        Direction.NORTH: RotationCommand(Direction.WEST),
+        Direction.SOUTH: RotationCommand(Direction.EAST),
+        Direction.EAST: RotationCommand(Direction.NORTH),
+        Direction.WEST: RotationCommand(Direction.SOUTH)
+    }
+}
+
+class Rover(RoverBase):
 
     def __init__(self, x: int, y: int, direction: Direction):
-        super().__init__()
-
-        if not isinstance(direction, Direction):
-            raise TypeError('Invalid direction!')
-
-        if not isinstance(x, int):
-            raise TypeError('x NaN')
-
-        if not isinstance(y, int):
-            raise TypeError('y NaN')
-
-        self.x = x
-        self.y = y
-        self.direction = direction
-
+        super().__init__(x, y, direction)
 
     def move(self, commands: list):
         for command in commands:
-            self.move_single(command)
+            self.move_single(Commands(command))
 
-    def move_single(self, command: str):
-        if  command == "F":
-            if self.direction == Direction.NORTH:
-                self.y += 1
+    def move_single(self, command: Commands):
+        mutation = mutations[command][self.direction]
 
-            if self.direction == Direction.SOUTH:
-                self.y -= 1
-
-            if self.direction == Direction.EAST:
-                self.x += 1
-
-            if self.direction == Direction.WEST:
-                self.x -= 1               
-
-        elif  command == "B":
-            if self.direction == Direction.NORTH:
-                self.y -= 1
+        mutation.applyTo(self)
