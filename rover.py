@@ -1,6 +1,7 @@
 from enum import Enum
 from rover_command import TranslationCommand, RotationCommand
-from rover_base import RoverBase, Direction, Commands
+from rover_gps import RoverGps, Direction, Commands
+from planet import PlanetMap
 
 mutations = {
     Commands.FORWARD: {
@@ -32,16 +33,26 @@ mutations = {
     }
 }
 
-class Rover(RoverBase):
+class Rover:
 
-    def __init__(self, x: int, y: int, direction: Direction):
-        super().__init__(x, y, direction)
+    def __init__(self, map: PlanetMap, x = 0, y = 0, direction = Direction.NORTH):
+        self.gps = RoverGps(x, y, direction)
 
     def move(self, commands: list):
         for command in commands:
-            self.move_single(Commands(command))
+            self.move_single(Commands(command))           
 
     def move_single(self, command: Commands):
-        mutation = mutations[command][self.direction]
+        mutation = mutations[command][self.gps.direction]
 
-        mutation.applyTo(self)
+        mutation.applyTo(self.gps)
+
+    def get_direction(self):
+        return self.gps.direction
+
+    def get_x(self):
+        return self.gps.x
+
+    def get_y(self):
+        return self.gps.y
+        

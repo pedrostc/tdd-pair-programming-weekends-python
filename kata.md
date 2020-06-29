@@ -8,6 +8,8 @@ You’re part of the team that explores Mars by sending remotely controlled vehi
 - [x] Implement commands that move the rover forward/backward (f,b).
 - [x] Implement commands that turn the rover left/right (l,r).
 - [ ] Implement wrapping from one edge of the grid to another. (planets are spheres after all)
+  - [x] define planet
+  - [ ] define "chain of command"
 - [ ] Implement obstacle detection before each move to a new square. If a given sequence of commands encounters an obstacle, the rover moves up to the last possible point, aborts the sequence and reports the obstacle.
 
 ## Rules
@@ -15,3 +17,27 @@ Hardcore TDD. No Excuses!
 Change roles (driver, navigator) after each TDD cycle.
 No red phases while refactoring.
 Be careful about edge cases and exceptions. We can not afford to lose a mars rover, just because the developers overlooked a null pointer.
+
+
+## Open Questions
+- [] Should we care about the direction we're facing to check edge?
+  - [] who should care? map or rover?
+
+|rover         |              |
+|--------------|--------------|
+|Resps | Colaboradores|
+|Guardar Posicao| GPS |
+|Recebe comandos||
+|Muda Posicao (reagindo aos comandos)|Map|
+|||
+
+|roverGps||
+|-|-|
+|Resps|Cola|
+|guardar posicao||
+|guardar orientacao||
+
+|Map||
+|-|-|
+|conhece tamanho do planeta||
+|identificar as bordas do planeta||

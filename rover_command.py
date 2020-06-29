@@ -1,8 +1,8 @@
-from rover_base import RoverBase
-from rover_base import Direction
+from rover_gps import RoverGps
+from rover_gps import Direction
 
 class Command():
-    def applyTo(self, rover: RoverBase):
+    def applyTo(self, rover: RoverGps):
         pass
 
 class TranslationCommand(Command):

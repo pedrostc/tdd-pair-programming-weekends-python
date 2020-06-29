@@ -12,7 +12,7 @@ class Commands(Enum):
     LEFT = "L"
     RIGHT = "R"
 
-class RoverBase:
+class RoverGps:
 
     def __init__(self, x: int, y: int, direction: Direction):
         super().__init__()
