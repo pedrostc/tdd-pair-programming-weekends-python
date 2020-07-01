@@ -2,11 +2,11 @@ import unittest
 from rover import Rover
 from rover import Direction
 from planet import PlanetMap
+from parameterized import parameterized
 
 class RoverTest(unittest.TestCase):
     
-    ## CONDITION
-    
+    # CONDITION
     def test_receives_position_direction_and_map(self):
         map = PlanetMap(10,10)
         rover = Rover(map, 0, 0, Direction.NORTH)
@@ -20,35 +20,19 @@ class RoverTest(unittest.TestCase):
         self.assertRaises(TypeError, lambda: Rover("bolinha", 0, Direction.NORTH))
         self.assertRaises(TypeError, lambda: Rover(0, "quadradinho", Direction.NORTH))
         
-    ## TRANSLATION        
-        
-    def test_moves_forward_North(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.NORTH)
+    # TRANSLATION
+    @parameterized.expand([
+        ("facing north", Direction.NORTH, 0, 1),
+        ("facing south", Direction.SOUTH, 0, -1),
+        ("facing east", Direction.EAST, 1, 0),
+        ("facing west", Direction.WEST, -1, 0),
+    ])
+    def test_moves_forward(self, _, direction, expectedX, expectedY):
+        map = PlanetMap(10, 10)
+        rover = Rover(map, 0, 0, direction)
         rover.move(["F"])
-        self.assertEqual(rover.get_y(), 1)
-        self.assertEqual(rover.get_x(), 0)
-
-    def test_moves_forward_South(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.SOUTH)
-        rover.move(["F"])
-        self.assertEqual(rover.get_y(), -1)
-        self.assertEqual(rover.get_x(), 0)
-
-    def test_moves_forward_East(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.EAST)
-        rover.move(["F"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 1)
-    
-    def test_moves_forward_West(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.WEST)
-        rover.move(["F"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), -1)   
+        self.assertEqual(rover.get_x(), expectedX)
+        self.assertEqual(rover.get_y(), expectedY)
 
     def test_moves_backward_North(self):
         map = PlanetMap(10,10)
@@ -171,8 +155,8 @@ class RoverTest(unittest.TestCase):
         # identify the edge
         self.assertEqual(isEdge, True)
     
-    def test_map_identify_vertical_border(self):
-        self.assertEqual(True, False)
+    # def test_map_identify_vertical_border(self):
+    #     self.assertEqual(True, False)
 
 
     # def test_Warp_around_grid(self):
