@@ -34,33 +34,18 @@ class RoverTest(unittest.TestCase):
         self.assertEqual(rover.get_x(), expectedX)
         self.assertEqual(rover.get_y(), expectedY)
 
-    def test_moves_backward_North(self):
+    @parameterized.expand([
+        ("facing north", Direction.NORTH, 0, -1),
+        ("facing south", Direction.SOUTH, 0, 1),
+        ("facing east", Direction.EAST, -1, 0),
+        ("facing west", Direction.WEST, 1, 0),
+    ])
+    def test_moves_backward(self, _, direction, expectedX, expectedY):
         map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.NORTH)
+        rover = Rover(map, 0, 0, direction)
         rover.move(["B"])
-        self.assertEqual(rover.get_y(), -1)
-        self.assertEqual(rover.get_x(), 0)        
-
-    def test_moves_backward_South(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.SOUTH)
-        rover.move(["B"])
-        self.assertEqual(rover.get_y(), 1)
-        self.assertEqual(rover.get_x(), 0)       
-
-    def test_moves_backward_East(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.EAST)
-        rover.move(["B"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), -1)     
-
-    def test_moves_backward_West(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.WEST)
-        rover.move(["B"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 1)  
+        self.assertEqual(rover.get_x(), expectedX)
+        self.assertEqual(rover.get_y(), expectedY)       
             
 ## ROTATION
 # TURN FROM NORTH
