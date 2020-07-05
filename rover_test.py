@@ -21,101 +21,43 @@ class RoverTest(unittest.TestCase):
         self.assertRaises(TypeError, lambda: Rover(0, "quadradinho", Direction.NORTH))
         
     # TRANSLATION
-    @parameterized.expand([
-        ("facing north", Direction.NORTH, 0, 1),
-        ("facing south", Direction.SOUTH, 0, -1),
-        ("facing east", Direction.EAST, 1, 0),
-        ("facing west", Direction.WEST, -1, 0),
-    ])
-    def test_moves_forward(self, _, direction, expectedX, expectedY):
-        map = PlanetMap(10, 10)
-        rover = Rover(map, 0, 0, direction)
-        rover.move(["F"])
-        self.assertEqual(rover.get_x(), expectedX)
-        self.assertEqual(rover.get_y(), expectedY)
 
     @parameterized.expand([
-        ("facing north", Direction.NORTH, 0, -1),
-        ("facing south", Direction.SOUTH, 0, 1),
-        ("facing east", Direction.EAST, -1, 0),
-        ("facing west", Direction.WEST, 1, 0),
+        ("moving FORWARD facing NORTH", Direction.NORTH, "F", 0, 1),
+        ("moving FORWARD facing SOUTH", Direction.SOUTH, "F", 0, -1),
+        ("moving FORWARD facing EAST", Direction.EAST, "F", 1, 0),
+        ("moving FORWARD facing WEST", Direction.WEST, "F", -1, 0),
+        ("moving BACKWARDS facing NORTH", Direction.NORTH, "B", 0, -1),
+        ("moving BACKWARDS facing SOUTH", Direction.SOUTH, "B", 0, 1),
+        ("moving BACKWARDS facing EAST", Direction.EAST, "B", -1, 0),
+        ("moving BACKWARDS facing WEST", Direction.WEST, "B", 1, 0),        
     ])
-    def test_moves_backward(self, _, direction, expectedX, expectedY):
+    def test_translation(self, _, direction, command, expectedX, expectedY):
         map = PlanetMap(10,10)
         rover = Rover(map, 0, 0, direction)
-        rover.move(["B"])
+        rover.move([command])
         self.assertEqual(rover.get_x(), expectedX)
-        self.assertEqual(rover.get_y(), expectedY)       
+        self.assertEqual(rover.get_y(), expectedY)     
             
 ## ROTATION
 # TURN FROM NORTH
-    def test_turns_left_North(self):
+    @parameterized.expand([
+        ("turning RIGHT from NORTH", Direction.NORTH, "R", Direction.EAST),
+        ("turning LEFT from NORTH", Direction.NORTH, "L", Direction.WEST),
+        ("turning RIGHT from SOUTH", Direction.SOUTH, "R", Direction.WEST),
+        ("turning LEFT from SOUTH", Direction.SOUTH, "L", Direction.EAST),
+        ("turning RIGHT from EAST", Direction.EAST, "R", Direction.SOUTH),
+        ("turning LEFT from EAST", Direction.EAST, "L", Direction.NORTH),
+        ("turning RIGHT from WEST", Direction.WEST, "R", Direction.NORTH),
+        ("turning LEFT from WEST", Direction.WEST, "L", Direction.SOUTH),
+    ])
+    def test_rotation(self, _, originalDirection, command, expectedDirection):
         map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.NORTH)
-        rover.move(["L"])
+        rover = Rover(map, 0, 0, originalDirection)
+        rover.move([command])
         self.assertEqual(rover.get_y(), 0)
         self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.WEST)    
-
-    def test_turns_right_North(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.NORTH)
-        rover.move(["R"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.EAST)
-
-# TURN FROM SOUTH
-    def test_turns_left_South(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.SOUTH)
-        rover.move(["L"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.EAST)    
-
-    def test_turns_right_South(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.SOUTH)
-        rover.move(["R"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.WEST) 
-
-# TURN FROM EAST
-    def test_turns_left_East(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.EAST)
-        rover.move(["L"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.NORTH)    
-
-    def test_turns_right_East(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.EAST)
-        rover.move(["R"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.SOUTH) 
-
-# TURN FROM WEST
-    def test_turns_left_West(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.WEST)
-        rover.move(["L"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.SOUTH)    
-
-    def test_turns_right_West(self):
-        map = PlanetMap(10,10)
-        rover = Rover(map, 0, 0, Direction.WEST)
-        rover.move(["R"])
-        self.assertEqual(rover.get_y(), 0)
-        self.assertEqual(rover.get_x(), 0) 
-        self.assertEqual(rover.get_direction(), Direction.NORTH)  
-
+        self.assertEqual(rover.get_direction(), expectedDirection)
 
 # MOVING AROUND
     def test_list_commands_from_west_Reach_End_Point(self):
