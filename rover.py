@@ -5,15 +5,15 @@ from planet import PlanetMap
 
 mutations = {
     Commands.FORWARD: {
-        Direction.NORTH: TranslationCommand(0, 1),
-        Direction.SOUTH: TranslationCommand(0, -1),
+        Direction.NORTH: TranslationCommand(0, -1),
+        Direction.SOUTH: TranslationCommand(0, 1),
         Direction.EAST: TranslationCommand(1, 0),
         Direction.WEST: TranslationCommand(-1, 0)
     },
 
     Commands.BACKWARD: {
-        Direction.NORTH: TranslationCommand(0, -1),
-        Direction.SOUTH: TranslationCommand(0, 1),
+        Direction.NORTH: TranslationCommand(0, 1),
+        Direction.SOUTH: TranslationCommand(0, -1),
         Direction.EAST: TranslationCommand(-1, 0),
         Direction.WEST: TranslationCommand(1, 0)
     },
@@ -37,6 +37,7 @@ class Rover:
 
     def __init__(self, map: PlanetMap, x = 0, y = 0, direction = Direction.NORTH):
         self.gps = RoverGps(x, y, direction)
+        self.map = map
 
     def move(self, commands: list):
         for command in commands:
@@ -45,7 +46,7 @@ class Rover:
     def move_single(self, command: Commands):
         mutation = mutations[command][self.gps.direction]
 
-        mutation.applyTo(self.gps)
+        mutation.applyTo(self.gps, self.map)
 
     def get_direction(self):
         return self.gps.direction

@@ -7,6 +7,8 @@ class PlanetMap():
         return self.width
     def get_height(self):
         return self.height
-
-    def is_edge(self, x, y):
-        return x == self.width-1
+    def get_max_y(self):
+        return self.get_height() - 1
+    def get_max_x(self):
+        return self.get_width() - 1
+    

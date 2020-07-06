@@ -21,23 +21,73 @@ class RoverTest(unittest.TestCase):
         self.assertRaises(TypeError, lambda: Rover(0, "quadradinho", Direction.NORTH))
         
     # TRANSLATION
-
     @parameterized.expand([
-        ("moving FORWARD facing NORTH", Direction.NORTH, "F", 0, 1),
-        ("moving FORWARD facing SOUTH", Direction.SOUTH, "F", 0, -1),
+        ("moving FORWARD facing NORTH", Direction.NORTH, "F", 0, 3),
+        ("moving FORWARD facing SOUTH", Direction.SOUTH, "F", 0, 1),
         ("moving FORWARD facing EAST", Direction.EAST, "F", 1, 0),
-        ("moving FORWARD facing WEST", Direction.WEST, "F", -1, 0),
-        ("moving BACKWARDS facing NORTH", Direction.NORTH, "B", 0, -1),
-        ("moving BACKWARDS facing SOUTH", Direction.SOUTH, "B", 0, 1),
-        ("moving BACKWARDS facing EAST", Direction.EAST, "B", -1, 0),
+        ("moving FORWARD facing WEST", Direction.WEST, "F", 3, 0),
+        ("moving BACKWARDS facing NORTH", Direction.NORTH, "B", 0, 1),
+        ("moving BACKWARDS facing SOUTH", Direction.SOUTH, "B", 0, 3),
+        ("moving BACKWARDS facing EAST", Direction.EAST, "B", 3, 0),
         ("moving BACKWARDS facing WEST", Direction.WEST, "B", 1, 0),        
     ])
-    def test_translation(self, _, direction, command, expectedX, expectedY):
-        map = PlanetMap(10,10)
+    def test_given_start_position_00_and_4x4_map(self, _, direction, command, expectedX, expectedY):
+        map = PlanetMap(4,4)
         rover = Rover(map, 0, 0, direction)
         rover.move([command])
         self.assertEqual(rover.get_x(), expectedX)
         self.assertEqual(rover.get_y(), expectedY)     
+
+    @parameterized.expand([
+        ("moving FORWARD facing NORTH", Direction.NORTH, "F", 0, 2),
+        ("moving FORWARD facing SOUTH", Direction.SOUTH, "F", 0, 0),
+        ("moving FORWARD facing EAST", Direction.EAST, "F", 1, 3),
+        ("moving FORWARD facing WEST", Direction.WEST, "F", 3, 3),        
+        ("moving BACKWARDS facing NORTH", Direction.NORTH, "B", 0, 0),
+        ("moving BACKWARDS facing SOUTH", Direction.SOUTH, "B", 0, 2),
+        ("moving BACKWARDS facing EAST", Direction.EAST, "B", 3, 3),
+        ("moving BACKWARDS facing WEST", Direction.WEST, "B", 1, 3),
+    ])
+    def test_given_start_position_03_and_4x4_map(self, _, direction, command, expectedX, expectedY):
+        map = PlanetMap(4,4)
+        rover = Rover(map, 0, 3, direction)
+        rover.move([command])
+        self.assertEqual(rover.get_x(), expectedX)
+        self.assertEqual(rover.get_y(), expectedY)
+
+    @parameterized.expand([
+        ("moving FORWARD facing NORTH", Direction.NORTH, "F", 3, 3),
+        ("moving FORWARD facing SOUTH", Direction.SOUTH, "F", 3, 1),        
+        ("moving FORWARD facing EAST", Direction.EAST, "F", 0, 0),
+        ("moving FORWARD facing WEST", Direction.WEST, "F", 2, 0),
+        ("moving BACKWARDS facing EAST", Direction.EAST, "B", 2, 0),
+        ("moving BACKWARDS facing WEST", Direction.WEST, "B", 0, 0),
+        ("moving BACKWARDS facing NORTH", Direction.NORTH, "B", 3, 1),
+        ("moving BACKWARDS facing SOUTH", Direction.SOUTH, "B", 3, 3),        
+    ])
+    def test_given_start_position_30_and_4x4_map(self, _, direction, command, expectedX, expectedY):
+        map = PlanetMap(4,4)
+        rover = Rover(map, 3, 0, direction)
+        rover.move([command])
+        self.assertEqual(rover.get_x(), expectedX)
+        self.assertEqual(rover.get_y(), expectedY)  
+
+    @parameterized.expand([
+        ("moving FORWARD facing NORTH", Direction.NORTH, "F", 3, 2),
+        ("moving FORWARD facing SOUTH", Direction.SOUTH, "F", 3, 0),        
+        ("moving FORWARD facing EAST", Direction.EAST, "F", 0, 3),
+        ("moving FORWARD facing WEST", Direction.WEST, "F", 2, 3),
+        ("moving BACKWARDS facing EAST", Direction.EAST, "B", 2, 3),
+        ("moving BACKWARDS facing WEST", Direction.WEST, "B", 0, 3),
+        ("moving BACKWARDS facing NORTH", Direction.NORTH, "B", 3, 0),
+        ("moving BACKWARDS facing SOUTH", Direction.SOUTH, "B", 3, 2),        
+    ])
+    def test_given_start_position_33_and_4x4_map(self, _, direction, command, expectedX, expectedY):
+        map = PlanetMap(4,4)
+        rover = Rover(map, 3, 3, direction)
+        rover.move([command])
+        self.assertEqual(rover.get_x(), expectedX)
+        self.assertEqual(rover.get_y(), expectedY)          
             
 ## ROTATION
 # TURN FROM NORTH
@@ -64,24 +114,29 @@ class RoverTest(unittest.TestCase):
         map = PlanetMap(10,10)
         rover = Rover(map, 0, 0, Direction.WEST)
         rover.move(["R" ,"R" ,"F" ,"F" ,"F" ,"F" ,"L" ,"L" ,"R" ,"B" ,"B", "R"])
-        self.assertEqual(rover.get_y(), -2)
+        self.assertEqual(rover.get_y(), 2)
         self.assertEqual(rover.get_x(), 4) 
         self.assertEqual(rover.get_direction(), Direction.EAST)
 
-    # Start from here
-    def test_map_can_map(self):
-        planet_map = PlanetMap(2, 2)
-        self.assertEqual(planet_map.get_height(), 2)
-        self.assertEqual(planet_map.get_width(), 2)
+    def test_given_4x4_map_getHeight_returnsHeight4(self):
+        planet_map = PlanetMap(4, 4)
+        self.assertEqual(planet_map.get_height(), 4)
 
-    def test_map_identify_horizontal_border(self):
-        # given a 2x2 planet
-        planet_map = PlanetMap(2,2)
-        # when checking a point pair on the edge
-        isEdge = planet_map.is_edge(1, 0)
-        # identify the edge
-        self.assertEqual(isEdge, True)
-    
+    def test_given_4x4_map_getWidth_returnsWidth(self):
+        planet_map = PlanetMap(4, 4)
+        self.assertEqual(planet_map.get_width(), 4)
+
+    def test_given_4x4_map_getMaxY_returnsMaxPossibleValue3(self):
+        planet_map = PlanetMap(4, 4)
+        self.assertEqual(planet_map.get_max_y(), 3)
+
+    def test_given_4x4_map_getMaxX_returnsMaxPossibleValue3(self):
+        planet_map = PlanetMap(4, 4)
+        self.assertEqual(planet_map.get_max_x(), 3)
+
+    # map -> tiles edges: []
+    # map[2][1].hasEdgeOnDirection() 
+
     # def test_map_identify_vertical_border(self):
     #     self.assertEqual(True, False)
 
